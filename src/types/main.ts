@@ -18,6 +18,7 @@ export type QueueConfig = {
   queue: Omit<QueueOptions, 'connection'> & { connection?: ConnectionOptions }
   worker: Omit<WorkerOptions, 'connection'> & { connection?: ConnectionOptions }
   jobs: JobsOptions
+  jobHandlerLoader?: (name: string) => Promise<JobHandlerConstructor>
 }
 
 export type InferJobPayload<T extends JobHandlerConstructor> = Parameters<

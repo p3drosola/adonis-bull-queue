@@ -79,7 +79,14 @@ export class QueueManager {
   }
 
   async #instantiateJob(job: BullMQJob) {
-    const { default: jobClass } = await import(job.name)
+    let jobClass: JobHandlerConstructor
+
+    if (this.#options.jobHandlerLoader) {
+      jobClass = await this.#options.jobHandlerLoader(job.name)
+    } else {
+      const importResult = await import(job.name)
+      jobClass = importResult.default
+    }
     const jobClassInstance = await this.#app.container.make(jobClass)
     jobClassInstance.$injectInternal({ job, logger: this.#logger })
 
